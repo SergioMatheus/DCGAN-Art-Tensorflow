@@ -171,12 +171,13 @@ def make_gif(images, fname, duration=2, true_image=False):
 
 def visualize(sess, dcgan, config, option):
   image_frame_dim = int(math.ceil(config.batch_size**.5))
+  p = samples.shape[0]
   if option == 0:
     z_sample = np.random.uniform(-0.5, 0.5, size=(config.batch_size, dcgan.z_dim))
     samples = sess.run(dcgan.sampler, feed_dict={dcgan.z: z_sample})
     save_images(samples, [image_frame_dim, image_frame_dim], './samples/test_%s.png' % strftime("%Y-%m-%d-%H-%M-%S", gmtime()))
   elif option == 1:
-    p =samples.shape[0]
+    
     for i in range(0,p):
      scipy.misc.imsave('./samples/single_%s_%s.png' %(idx,i), samples[i])
     values = np.arange(0, 1, 1./config.batch_size)
