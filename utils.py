@@ -23,7 +23,7 @@ def show_all_variables():
   slim.model_analyzer.analyze_vars(model_vars, print_info=True)
 
 def get_image(image_path, input_height, input_width,
-              resize_height=64, resize_width=64,
+              resize_height=128, resize_width=128,
               crop=True, grayscale=False):
   image = imread(image_path, grayscale)
   return transform(image, input_height, input_width,
@@ -67,7 +67,7 @@ def imsave(images, size, path):
   return scipy.misc.imsave(path, image)
 
 def center_crop(x, crop_h, crop_w,
-                resize_h=64, resize_w=64):
+                resize_h=128, resize_w=128):
   if crop_w is None:
     crop_w = crop_h
   h, w = x.shape[:2]
@@ -77,7 +77,7 @@ def center_crop(x, crop_h, crop_w,
       x[j:j+crop_h, i:i+crop_w], [resize_h, resize_w])
 
 def transform(image, input_height, input_width, 
-              resize_height=64, resize_width=64, crop=True):
+              resize_height=128, resize_width=128, crop=True):
   if crop:
     cropped_image = center_crop(
       image, input_height, input_width, 
@@ -171,7 +171,6 @@ def make_gif(images, fname, duration=2, true_image=False):
 
 def visualize(sess, dcgan, config, option):
   image_frame_dim = int(math.ceil(config.batch_size**.5))
-  p = samples.shape[0]
   if option == 0:
     z_sample = np.random.uniform(-0.5, 0.5, size=(config.batch_size, dcgan.z_dim))
     samples = sess.run(dcgan.sampler, feed_dict={dcgan.z: z_sample})
@@ -181,8 +180,10 @@ def visualize(sess, dcgan, config, option):
     for idx in xrange(dcgan.z_dim):
       z_sample = np.random.uniform(-1, 1, size=(config.batch_size , dcgan.z_dim))
       samples = sess.run(dcgan.sampler, feed_dict={dcgan.z: z_sample})
-      for i in range(0,p):
-        scipy.misc.imsave('./samples/single_%s_%s.png' %(idx,i), samples[i])
+      p = samples.shape[0]
+      # for i in range(0,p):
+      scipy.misc.imsave('./samples/single_%s_%s.png' %(idx,idx), samples[idx])
+        # save_images(samples, [image_frame_dim, image_frame_dim], './samples/single_%s_%s.png' % strftime("%Y-%m-%d-%H-%M-%S", gmtime()))
       values = np.arange(0, 1, 1./config.batch_size)
       print(" [*] %d" % idx)
 #       z_sample = np.random.uniform(-1, 1, size=(config.batch_size , dcgan.z_dim))
